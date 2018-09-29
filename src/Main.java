@@ -195,7 +195,11 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        popup.setLabel("jNoise - " + fileName);
+        trayIcon.setToolTip("jNoise - " + fileName);
         trayIcon.setImage(image);
+
     }
 
     private static void play(String fileName) {
