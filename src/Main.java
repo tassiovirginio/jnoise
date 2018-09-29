@@ -11,6 +11,15 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.net.URISyntaxException;
+
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 
 
 public class Main {
@@ -131,6 +140,9 @@ public class Main {
     }
 
 
+
+
+
     public static void main(String[] args) {
         carregarLista();
 
@@ -146,9 +158,7 @@ public class Main {
 
             ActionListener aboutlistener = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    JOptionPane.showMessageDialog(null,
-                            "https://github.com/tassiovirginio/jnoise", "About",
-                            JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, new MessageWithLink("Tássio Virgínio <br><br> <a href=\"https://github.com/tassiovirginio/jnoise\">https://github.com/tassiovirginio/jnoise</a>"),"About",JOptionPane.INFORMATION_MESSAGE);
                 }
             };
 
@@ -228,7 +238,6 @@ public class Main {
             popup.add(sair);
 
 
-
             File input = new File("sounds/jnoise.png");
             Image image = null;
             try {
@@ -266,4 +275,43 @@ public class Main {
     }
 
 
+}
+
+
+class MessageWithLink extends JEditorPane {
+    private static final long serialVersionUID = 1L;
+
+    public MessageWithLink(String htmlBody) {
+        super("text/html", "<html><body style=\"" + getStyle() + "\">" + htmlBody + "</body></html>");
+        addHyperlinkListener(new HyperlinkListener() {
+            @Override
+            public void hyperlinkUpdate(HyperlinkEvent e) {
+                if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
+                    try {
+                        java.awt.Desktop.getDesktop().browse(e.getURL().toURI());
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    } catch (URISyntaxException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+            }
+        });
+        setEditable(false);
+        setBorder(null);
+    }
+
+    static StringBuffer getStyle() {
+        // for copying style
+        JLabel label = new JLabel();
+        Font font = label.getFont();
+        Color color = label.getBackground();
+
+        // create some css from the label's font
+        StringBuffer style = new StringBuffer("font-family:" + font.getFamily() + ";");
+        style.append("font-weight:" + (font.isBold() ? "bold" : "normal") + ";");
+        style.append("font-size:" + font.getSize() + "pt;");
+        style.append("background-color: rgb("+color.getRed()+","+color.getGreen()+","+color.getBlue()+");");
+        return style;
+    }
 }
