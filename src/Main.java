@@ -37,6 +37,28 @@ public class Main {
         });
     }
 
+    private static void play(String fileName) {
+        ogg.stop();
+        ogg.close();
+        try {
+            popup.setLabel(APPNAME + " - " + fileName.replace(".ogg", ""));
+            File fileInput = new File("sounds/" + fileName);
+            File imageInput = new File("sounds/" + fileName.replace(".ogg", ".png"));
+            ogg = new OggClip(new FileInputStream(fileInput));
+            Image image = null;
+            try {
+                image = ImageIO.read(imageInput);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            trayIcon.setImage(image);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        ogg.loop();
+    }
+
     private static void play() {
         ogg.stop();
         ogg.close();
@@ -116,6 +138,20 @@ public class Main {
 
             SystemTray tray = SystemTray.getSystemTray();
 
+            ActionListener noiseslistener = new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    play(e.getActionCommand());
+                }
+            };
+
+            ActionListener aboutlistener = new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    JOptionPane.showMessageDialog(null,
+                            "https://github.com/tassiovirginio/jnoise", "About",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+            };
+
 
             ActionListener exitListener = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -156,12 +192,23 @@ public class Main {
 
             popup = new PopupMenu(APPNAME);
 
+            PopupMenu popupNoises = new PopupMenu("Noises");
+            for(File noise:afile){
+                MenuItem menuItem = new MenuItem(noise.getName());
+                menuItem.addActionListener(noiseslistener);
+                popupNoises.add(menuItem);
+            }
+
+            popup.add(popupNoises);
+            popup.addSeparator();
+
             MenuItem play = new MenuItem("Play");
             MenuItem stop = new MenuItem("Stop");
             MenuItem pause = new MenuItem("Pause");
             MenuItem next = new MenuItem("Next");
             MenuItem back = new MenuItem("Back");
-            MenuItem sair = new MenuItem("Sair");
+            MenuItem sair = new MenuItem("Exit");
+            MenuItem about = new MenuItem("About");
 
             sair.addActionListener(exitListener);
             play.addActionListener(playlistener);
@@ -169,21 +216,17 @@ public class Main {
             next.addActionListener(nextlistener);
             stop.addActionListener(stoplistener);
             pause.addActionListener(pauselistener);
-
+            about.addActionListener(aboutlistener);
             popup.add(play);
             popup.add(stop);
             popup.add(pause);
             popup.add(next);
             popup.add(back);
             popup.addSeparator();
+            popup.add(about);
+            popup.addSeparator();
             popup.add(sair);
 
-            PopupMenu popupNoises = new PopupMenu("Noises");
-            for(File noise:afile){
-                popupNoises.add(new MenuItem(noise.getName().replace(".ogg","")));
-            }
-
-            popup.add(popupNoises);
 
 
             File input = new File("sounds/jnoise.png");
@@ -194,21 +237,8 @@ public class Main {
                 e.printStackTrace();
             }
             trayIcon = new TrayIcon(image, "jNoise", popup);
-
-            ActionListener actionListener = new ActionListener() {
-
-                public void actionPerformed(ActionEvent e) {
-
-                    trayIcon.displayMessage("jNoise - About",
-                            "https://github.com/tassiovirginio/jnoise.",
-                            TrayIcon.MessageType.INFO);
-                }
-
-            };
-
             trayIcon.setImageAutoSize(true);
 
-            trayIcon.addActionListener(actionListener);
 
             try {
                 tray.add(trayIcon);
