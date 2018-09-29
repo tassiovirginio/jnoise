@@ -37,14 +37,14 @@ public class Main {
         });
     }
 
-    private static void play(){
+    private static void play() {
         ogg.stop();
         ogg.close();
         try {
             String fileName = afile[noiseAtual].getName();
-            popup.setLabel(APPNAME + " - " + fileName.replace(".ogg",""));
-            File fileInput = new File("sounds/"+fileName);
-            File imageInput = new File("sounds/"+fileName.replace(".ogg",".png"));
+            popup.setLabel(APPNAME + " - " + fileName.replace(".ogg", ""));
+            File fileInput = new File("sounds/" + fileName);
+            File imageInput = new File("sounds/" + fileName.replace(".ogg", ".png"));
             ogg = new OggClip(new FileInputStream(fileInput));
             Image image = null;
             try {
@@ -60,15 +60,15 @@ public class Main {
         ogg.loop();
     }
 
-    private static void next(){
+    private static void next() {
         ogg.stop();
         ogg.close();
         try {
-            noiseAtual+=1;
+            noiseAtual += 1;
             String fileName = afile[noiseAtual].getName();
-            popup.setLabel(APPNAME +" - " +  fileName.replace(".ogg",""));
-            File fileInput = new File("sounds/"+fileName);
-            File imageInput = new File("sounds/"+fileName.replace(".ogg",".png"));
+            popup.setLabel(APPNAME + " - " + fileName.replace(".ogg", ""));
+            File fileInput = new File("sounds/" + fileName);
+            File imageInput = new File("sounds/" + fileName.replace(".ogg", ".png"));
             ogg = new OggClip(new FileInputStream(fileInput));
             Image image = null;
             try {
@@ -84,15 +84,15 @@ public class Main {
         ogg.loop();
     }
 
-    private static void back(){
+    private static void back() {
         ogg.stop();
         ogg.close();
         try {
-            noiseAtual-=1;
+            noiseAtual -= 1;
             String fileName = afile[noiseAtual].getName();
-            popup.setLabel(APPNAME +" - " +  fileName.replace(".ogg",""));
-            File fileInput = new File("sounds/"+fileName);
-            File imageInput = new File("sounds/"+fileName.replace(".ogg",".png"));
+            popup.setLabel(APPNAME + " - " + fileName.replace(".ogg", ""));
+            File fileInput = new File("sounds/" + fileName);
+            File imageInput = new File("sounds/" + fileName.replace(".ogg", ".png"));
             ogg = new OggClip(new FileInputStream(fileInput));
             Image image = null;
             try {
@@ -113,7 +113,9 @@ public class Main {
         carregarLista();
 
         if (SystemTray.isSupported()) {
+
             SystemTray tray = SystemTray.getSystemTray();
+
 
             ActionListener exitListener = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -147,11 +149,10 @@ public class Main {
 
             ActionListener pauselistener = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    if(!ogg.isPaused())
-                    ogg.pause();
+                    if (!ogg.isPaused())
+                        ogg.pause();
                 }
             };
-
 
             popup = new PopupMenu(APPNAME);
 
@@ -177,6 +178,13 @@ public class Main {
             popup.addSeparator();
             popup.add(sair);
 
+            PopupMenu popupNoises = new PopupMenu("Noises");
+            for(File noise:afile){
+                popupNoises.add(new MenuItem(noise.getName().replace(".ogg","")));
+            }
+
+            popup.add(popupNoises);
+
 
             File input = new File("sounds/jnoise.png");
             Image image = null;
@@ -191,8 +199,8 @@ public class Main {
 
                 public void actionPerformed(ActionEvent e) {
 
-                    trayIcon.displayMessage("jNoise - Sobre",
-                            "Escrito por Tássio Virgínio \n acesse o github para ajudar no código.",
+                    trayIcon.displayMessage("jNoise - About",
+                            "https://github.com/tassiovirginio/jnoise.",
                             TrayIcon.MessageType.INFO);
                 }
 
@@ -217,10 +225,10 @@ public class Main {
 
     }
 
-    private static void carregarArquivo(){
+    private static void carregarArquivo() {
         try {
             String fileName = afile[noiseAtual].getName();
-            File fileInput = new File("sounds/"+fileName);
+            File fileInput = new File("sounds/" + fileName);
             ogg = new OggClip(new FileInputStream(fileInput));
         } catch (IOException e) {
             e.printStackTrace();
