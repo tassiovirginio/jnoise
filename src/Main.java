@@ -92,6 +92,9 @@ public class Main {
     }
 
     private static void next() {
+
+        if(noiseAtual == afile.length-1)return;
+
         ogg.stop();
         ogg.close();
         try {
@@ -116,6 +119,9 @@ public class Main {
     }
 
     private static void back() {
+
+        if(noiseAtual == 0)return;
+
         ogg.stop();
         ogg.close();
         try {
@@ -189,6 +195,14 @@ public class Main {
 
             ActionListener stoplistener = new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
+                    Image image = null;
+                    try {
+                        image = ImageIO.read(new File("sounds/jnoise.png"));
+                    } catch (IOException e2) {
+                        e2.printStackTrace();
+                    }
+
+                    trayIcon.setImage(image);
                     ogg.stop();
                 }
             };
