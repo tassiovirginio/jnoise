@@ -10,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.Color;
 import java.awt.Font;
 import java.net.URISyntaxException;
@@ -35,118 +34,6 @@ public class Main {
     private static TrayIcon trayIcon = null;
 
     private static PopupMenu popup = null;
-
-    public static void carregarLista() {
-        File file = new File("sounds");
-        afile = file.listFiles(new FileFilter() {
-            @Override
-            public boolean accept(File pathname) {
-                return pathname.getName().toUpperCase().endsWith(".OGG");
-            }
-        });
-    }
-
-    private static void play(String fileName) {
-        ogg.stop();
-        ogg.close();
-        try {
-            popup.setLabel(APPNAME + " - " + fileName.replace(".ogg", ""));
-            File fileInput = new File("sounds/" + fileName);
-            File imageInput = new File("sounds/" + fileName.replace(".ogg", ".png"));
-            ogg = new OggClip(new FileInputStream(fileInput));
-            Image image = null;
-            try {
-                image = ImageIO.read(imageInput);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            trayIcon.setImage(image);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ogg.loop();
-    }
-
-    private static void play() {
-        ogg.stop();
-        ogg.close();
-        try {
-            String fileName = afile[noiseAtual].getName();
-            popup.setLabel(APPNAME + " - " + fileName.replace(".ogg", ""));
-            File fileInput = new File("sounds/" + fileName);
-            File imageInput = new File("sounds/" + fileName.replace(".ogg", ".png"));
-            ogg = new OggClip(new FileInputStream(fileInput));
-            Image image = null;
-            try {
-                image = ImageIO.read(imageInput);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            trayIcon.setImage(image);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ogg.loop();
-    }
-
-    private static void next() {
-
-        if(noiseAtual == afile.length-1)return;
-
-        ogg.stop();
-        ogg.close();
-        try {
-            noiseAtual += 1;
-            String fileName = afile[noiseAtual].getName();
-            popup.setLabel(APPNAME + " - " + fileName.replace(".ogg", ""));
-            File fileInput = new File("sounds/" + fileName);
-            File imageInput = new File("sounds/" + fileName.replace(".ogg", ".png"));
-            ogg = new OggClip(new FileInputStream(fileInput));
-            Image image = null;
-            try {
-                image = ImageIO.read(imageInput);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            trayIcon.setImage(image);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ogg.loop();
-    }
-
-    private static void back() {
-
-        if(noiseAtual == 0)return;
-
-        ogg.stop();
-        ogg.close();
-        try {
-            noiseAtual -= 1;
-            String fileName = afile[noiseAtual].getName();
-            popup.setLabel(APPNAME + " - " + fileName.replace(".ogg", ""));
-            File fileInput = new File("sounds/" + fileName);
-            File imageInput = new File("sounds/" + fileName.replace(".ogg", ".png"));
-            ogg = new OggClip(new FileInputStream(fileInput));
-            Image image = null;
-            try {
-                image = ImageIO.read(imageInput);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            trayIcon.setImage(image);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ogg.loop();
-    }
-
-
-
 
 
     public static void main(String[] args) {
@@ -269,7 +156,7 @@ public class Main {
                 System.err.println("Erro, TrayIcon não sera adicionado.");
             }
 
-            carregarArquivo();
+            carregarArquivo(null,false);
 
         } else {
             JOptionPane.showMessageDialog(null, "recurso ainda não esta disponível pra o seu sistema");
@@ -278,16 +165,61 @@ public class Main {
 
     }
 
-    private static void carregarArquivo() {
+    public static void carregarLista() {
+        File file = new File("sounds");
+        afile = file.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return pathname.getName().toUpperCase().endsWith(".OGG");
+            }
+        });
+    }
+
+    private static void carregarArquivo(String fileName, boolean mudarIcone) {
+        if(fileName==null) fileName = afile[noiseAtual].getName();
         try {
-            String fileName = afile[noiseAtual].getName();
             File fileInput = new File("sounds/" + fileName);
             ogg = new OggClip(new FileInputStream(fileInput));
+            if(mudarIcone)mudarIcone(fileName);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+
+    private static void mudarIcone(String fileName) {
+        File imageInput = new File("sounds/" + fileName.replace(".ogg", ".png"));
+        Image image = null;
+        try {
+            image = ImageIO.read(imageInput);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        trayIcon.setImage(image);
+    }
+
+    private static void play(String fileName) {
+        ogg.stop();
+        ogg.close();
+        carregarArquivo(fileName,true);
+        ogg.loop();
+    }
+
+    private static void play() {
+        play(afile[noiseAtual].getName());
+    }
+
+    private static void next() {
+        if(noiseAtual == afile.length-1)return;
+        noiseAtual += 1;
+        play();
+    }
+
+    private static void back() {
+        if(noiseAtual == 0)return;
+        noiseAtual -= 1;
+        play();
+    }
 
 }
 
